@@ -5,10 +5,14 @@ import com.ardidong.weatherornot.domain.weather.WeatherRepository
 import com.ardidong.weatherornot.domain.weather.model.CurrentWeather
 
 class WeatherRepositoryImpl(
-    private val remoteDataSource: WeatherRemoteDataSource
+//    private val remoteDataSource: WeatherRemoteDataSource
 ) : WeatherRepository {
 
-    override suspend fun getCurrentWeather(): ResultOf<CurrentWeather> {
-        return remoteDataSource.getCurrentWeather()
+//    override suspend fun getCurrentWeather(): ResultOf<CurrentWeather> {
+//        return remoteDataSource.getCurrentWeather()
+//    }
+
+    override suspend fun getCurrentWeather(): ResultOf<String> {
+        return ResultOf.Success("FFFF")
     }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ardidong.weatherornot.domain.weather.GetCurrentWeatherUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -13,7 +14,7 @@ import kotlin.random.nextInt
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-
+    private val dispatchGetCurrentWeather: GetCurrentWeatherUseCase
 ) : ViewModel() {
 
     private var _result = MutableLiveData<Int>()
