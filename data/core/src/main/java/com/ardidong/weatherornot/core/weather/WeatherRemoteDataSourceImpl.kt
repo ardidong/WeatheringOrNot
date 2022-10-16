@@ -5,8 +5,9 @@ import com.ardidong.weatherornot.core.weather.mapper.CurrentWeatherMapper
 import com.ardidong.weatherornot.core.weather.model.CurrentWeatherResponse
 import com.ardidong.weatherornot.domain.common.ResultOf
 import com.ardidong.weatherornot.domain.weather.model.CurrentWeather
+import javax.inject.Inject
 
-class WeatherRemoteDataSourceImpl(
+class WeatherRemoteDataSourceImpl @Inject constructor(
 
 ) : WeatherRemoteDataSource {
     private val deserializer = Deserializer(CurrentWeatherResponse::class.java)

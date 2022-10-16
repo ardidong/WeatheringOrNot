@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ardidong.weatherornot.domain.weather.GetCurrentWeatherUseCase
+import com.ardidong.weatherornot.domain.weather.model.CurrentWeather
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,14 +19,16 @@ class MainViewModel @Inject constructor(
     private val dispatchGetCurrentWeather: GetCurrentWeatherUseCase
 ) : ViewModel() {
 
-    private var _result = MutableLiveData<Int>()
-    val observableResult : LiveData<Int> get() = _result
+    private var _result = MutableLiveData<CurrentWeather>()
+    val observableResult : LiveData<CurrentWeather> get() = _result
 
     init {
         viewModelScope.launch {
             delay(5000)
-            val random = Random.nextInt(1..100)
-            _result.postValue(random)
+            dispatchGetCurrentWeather().fold(
+                success = { _result.postValue(it) },
+                failure = {}
+            )
         }
     }
 }

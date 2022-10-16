@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetCurrentWeatherUseCaseImpl @Inject constructor(
     private val repository: WeatherRepository
 ) : GetCurrentWeatherUseCase {
-    override suspend fun invoke(): ResultOf<String> {
+    override suspend fun invoke(): ResultOf<CurrentWeather> {
         return repository.getCurrentWeather().fold(
             success = {
                 ResultOf.Success(it)

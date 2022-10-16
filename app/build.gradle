@@ -49,7 +49,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     //Internal libs
-    implementation project(path: ':data')
+    implementation project(path: ':data:core')
     implementation project(path: ':domain')
 
     // ViewModel
