@@ -5,17 +5,32 @@ import com.ardidong.weatherornot.core.weather.mapper.CurrentWeatherMapper
 import com.ardidong.weatherornot.core.weather.model.CurrentWeatherResponse
 import com.ardidong.weatherornot.domain.common.ResultOf
 import com.ardidong.weatherornot.domain.weather.model.CurrentWeather
+import com.ardidong.weatherornot.library.network.RetrofitClient
+import com.ardidong.weatherornot.library.network.handleApi
+import retrofit2.Response
+import retrofit2.Retrofit
 import javax.inject.Inject
 
 class WeatherRemoteDataSourceImpl @Inject constructor(
-
+    private val retrofitClient: Retrofit
 ) : WeatherRemoteDataSource {
-    private val deserializer = Deserializer(CurrentWeatherResponse::class.java)
     private val mapper = CurrentWeatherMapper()
 
-    override suspend fun getCurrentWeather(): ResultOf<CurrentWeather> {
-        val response = deserializer.deserialize(dummyCurrentWeather)
-        return ResultOf.Success(mapper.toModel(response))
+    override suspend fun getCurrentWeather(
+        lat: Double,
+        lon: Double,
+        appId: String,
+        units: String
+    ): ResultOf<CurrentWeather> {
+        val client = retrofitClient.create(CurrentWeatherApiService::class.java)
+        return handleApi { client.getCurrentWeather(lat, lon, appId, units) }.fold(
+            success = {
+                ResultOf.Success(mapper.toModel(it))
+            },
+            failure = {
+                return ResultOf.Failure(it)
+            }
+        )
     }
 
     private val dummyCurrentWeather = "{\n" +

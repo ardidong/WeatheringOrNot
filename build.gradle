@@ -14,9 +14,14 @@ ext{
     gson_version = "2.9.1"
     lifecycle_version = "2.5.1"
     hilt_version = "2.44"
+    retrofit_version = "2.9.0"
+    logging_interceptor_version = "4.10.0"
 
     libraries = [
             daggerHilt              : "com.google.dagger:hilt-android:" + hilt_version,
-            hiltKapt                : "com.google.dagger:hilt-compiler:" + hilt_version
+            hiltKapt                : "com.google.dagger:hilt-compiler:" + hilt_version,
+            retrofit                : "com.squareup.retrofit2:retrofit:" + retrofit_version,
+            gsonConverter           : "com.squareup.retrofit2:converter-gson:" + retrofit_version,
+            loggingInterceptor       : "com.squareup.okhttp3:logging-interceptor:" + logging_interceptor_version
     ]
 }

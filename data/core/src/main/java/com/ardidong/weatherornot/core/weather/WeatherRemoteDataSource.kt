@@ -5,5 +5,10 @@ import com.ardidong.weatherornot.domain.weather.model.CurrentWeather
 import dagger.Component
 
 interface WeatherRemoteDataSource {
-    suspend fun getCurrentWeather(): ResultOf<CurrentWeather>
+    suspend fun getCurrentWeather(
+        lat: Double,
+        lon: Double,
+        appId: String,
+        units: String
+    ): ResultOf<CurrentWeather>
 }

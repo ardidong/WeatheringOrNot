@@ -24,7 +24,6 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            delay(5000)
             dispatchGetCurrentWeather().fold(
                 success = { _result.postValue(it) },
                 failure = {}
