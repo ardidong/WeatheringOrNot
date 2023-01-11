@@ -16,6 +16,8 @@ ext{
     hilt_version = "2.44"
     retrofit_version = "2.9.0"
     logging_interceptor_version = "4.10.0"
+    nav_version = "2.5.3"
+
 
     libraries = [
             daggerHilt              : "com.google.dagger:hilt-android:" + hilt_version,
