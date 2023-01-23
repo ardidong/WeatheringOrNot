@@ -40,17 +40,19 @@ fun WeatherSummary(){
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             SummaryTimeDate()
-            SummaryTempAndWeather()
+            SummaryTempAndWeather( modifier = Modifier
+                .fillMaxWidth()
+                .padding(all = 16.dp)
+            )
+            SummaryOtherInfo()
         }
     }
 }
 
 @Composable
-fun SummaryTempAndWeather(){
+fun SummaryTempAndWeather(modifier: Modifier){
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+        modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){
@@ -79,7 +81,6 @@ fun SummaryTempAndWeather(){
 @Composable
 fun CurrentWeather(){
     Card(
-
         shape = RoundedCornerShape(16.dp),
         backgroundColor = Color.Gray
     ){
@@ -105,5 +106,50 @@ fun SummaryTimeDate(){
             )
         }
         Text(text = "10.00")
+    }
+}
+
+@Composable
+fun SummaryOtherInfo(){
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        val rowAlignment = Alignment.CenterVertically
+        val iconModifier = Modifier.size(28.dp)
+            .padding(2.dp)
+
+        Row(
+            verticalAlignment = rowAlignment
+        ) {
+            Icon(
+                modifier = iconModifier,
+                painter = painterResource(id = R.drawable.ic_baseline_wind_power_24),
+                contentDescription = "wind_speed"
+            )
+            Text(text = "8km/h")
+        }
+
+        Row(
+            verticalAlignment = rowAlignment
+        ) {
+            Icon(
+                modifier = iconModifier,
+                painter = painterResource(id = R.drawable.ic_outline_water_drop_24),
+                contentDescription = "humidity"
+            )
+            Text(text = "69%")
+        }
+
+        Row(
+            verticalAlignment = rowAlignment
+        ){
+            Icon(
+                modifier = iconModifier,
+                painter = painterResource(id = R.drawable.ic_outline_cloud_24),
+                contentDescription = "cloud_coverage"
+            )
+            Text(text = "44%")
+        }
     }
 }
