@@ -1,5 +1,7 @@
-package com.ardidong.weatherornot.library.network
+package com.ardidong.weatherornot.library.network.di
 
+import com.ardidong.weatherornot.library.network.NetworkClient
+import com.ardidong.weatherornot.library.network.RetrofitClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,4 +37,11 @@ class NetworkModule {
         .client(okHttpClient)
         .baseUrl("https://api.openweathermap.org/")
         .build()
+
+    @Singleton
+    @Provides
+    fun provideNetworkClient(retrofit: Retrofit) : NetworkClient {
+       return RetrofitClient(retrofit)
+    }
+
 }

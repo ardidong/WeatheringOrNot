@@ -1,18 +1,13 @@
 package com.ardidong.weatherornot.core.weather
 
-import com.ardidong.weatherornot.core.util.serialize.Deserializer
 import com.ardidong.weatherornot.core.weather.mapper.CurrentWeatherMapper
-import com.ardidong.weatherornot.core.weather.model.CurrentWeatherResponse
 import com.ardidong.weatherornot.domain.common.ResultOf
 import com.ardidong.weatherornot.domain.weather.model.CurrentWeather
-import com.ardidong.weatherornot.library.network.RetrofitClient
-import com.ardidong.weatherornot.library.network.handleApi
-import retrofit2.Response
-import retrofit2.Retrofit
+import com.ardidong.weatherornot.library.network.NetworkClient
 import javax.inject.Inject
 
 class WeatherRemoteDataSourceImpl @Inject constructor(
-    private val retrofitClient: Retrofit
+    private val networkClient: NetworkClient
 ) : WeatherRemoteDataSource {
     private val mapper = CurrentWeatherMapper()
 
@@ -22,8 +17,8 @@ class WeatherRemoteDataSourceImpl @Inject constructor(
         appId: String,
         units: String
     ): ResultOf<CurrentWeather> {
-        val client = retrofitClient.create(CurrentWeatherApiService::class.java)
-        return handleApi { client.getCurrentWeather(lat, lon, appId, units) }.fold(
+        val client = networkClient.getInstance(CurrentWeatherApiService::class.java)
+        return networkClient.handleApi { client.getCurrentWeather(lat, lon, appId, units) }.fold(
             success = {
                 ResultOf.Success(mapper.toModel(it))
             },
