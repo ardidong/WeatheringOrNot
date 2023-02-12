@@ -18,13 +18,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+//        setContentView(binding.root)
 
         viewModel.observableResult.observe(this){
             binding.mainText.text = it.toString()
         }
-//        setContent {
-//            WeatherOrNotApp()
-//        }
+        setContent {
+            WeatherOrNotApp()
+        }
     }
 }

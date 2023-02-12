@@ -53,6 +53,10 @@ data class CurrentWeather(
 		val lon: Double,
 		val lat: Double
 	)
+
+	companion object{
+		val DUMMY = CurrentWeather(visibility=5189, timezone=25200, main=Main(temp=27.34, tempMin=27.34, grndLevel=986, humidity=80, pressure=1009, seaLevel=1009, feelsLike=30.51, tempMax=27.34), clouds=Clouds(all=98), sys=Sys(country="ID", sunrise=1676155307, sunset=1676199844), dt=1676184336, coord=Coord(lon=110.3478, lat=-7.7211), weather= listOf( WeatherItem(icon="04d", description="04d", main="Clouds", id=804)), name="Sleman", cod=200, id=1626754, base="stations", wind=Wind(deg=230, speed=3.03, gust=4.0))
+	}
 }
 
 

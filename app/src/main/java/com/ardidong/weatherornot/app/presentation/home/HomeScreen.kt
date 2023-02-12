@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -12,26 +13,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.ardidong.weatherornot.app.MainViewModel
 import com.ardidong.weatherornot.app.R
+import com.ardidong.weatherornot.domain.weather.model.CurrentWeather
+import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(){
+    val viewModel = hiltViewModel<MainViewModel>()
+    val currentWeather = viewModel.observableResult.observeAsState(initial = null)
+
     MaterialTheme() {
-       Scaffold(
-           topBar = { TopAppBar(title = { Text(text = "Top Bar")}) }
-       ) { paddingValues ->  
+        Scaffold(
+            topBar = { TopAppBar(title = { Text(text = "Top Bar")}) }
+        ) { paddingValues ->
             Column(
                 modifier = Modifier.padding(paddingValues)
             ) {
-                Text(text = "body")
+
+                if(currentWeather.value !=  null){
+                    WeatherSummary(currentWeather.value!!)
+                }
             }
-       }
+        }
     }
 }
 
 @Preview
 @Composable
-fun WeatherSummary(){
+fun WeatherSummary(currentWeather: CurrentWeather = CurrentWeather.DUMMY){
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,18 +50,19 @@ fun WeatherSummary(){
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            SummaryTimeDate()
+            Text(text = "Sleman", fontSize = 24.sp, fontWeight = FontWeight.Bold)
             SummaryTempAndWeather( modifier = Modifier
                 .fillMaxWidth()
-                .padding(all = 16.dp)
+                .padding(all = 16.dp),
+                currentWeather = currentWeather
             )
-            SummaryOtherInfo()
+            SummaryOtherInfo(currentWeather)
         }
     }
 }
 
 @Composable
-fun SummaryTempAndWeather(modifier: Modifier){
+fun SummaryTempAndWeather(currentWeather: CurrentWeather ,modifier: Modifier){
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -60,10 +72,10 @@ fun SummaryTempAndWeather(modifier: Modifier){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row{
-                Text(text = "27", fontSize = 64.sp)
+                Text(text = currentWeather.main.temp.roundToInt().toString(), fontSize = 64.sp)
                 Text(text = "C", fontSize = 24.sp)
             }
-            Text(fontWeight = FontWeight.Light,text = "Feels like 23")
+            Text(fontWeight = FontWeight.Light,text = "Feels like ${currentWeather.main.feelsLike.roundToInt()}")
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -73,50 +85,33 @@ fun SummaryTempAndWeather(modifier: Modifier){
                 painter = painterResource(id = R.drawable.ic_baseline_cloud_24),
                 contentDescription = "weather_icon"
             )
-            CurrentWeather()
+            CurrentWeatherIcon(currentWeather.weather[0].main)
         }
     }
 }
 
 @Composable
-fun CurrentWeather(){
+fun CurrentWeatherIcon(weatherInfo: String){
     Card(
         shape = RoundedCornerShape(16.dp),
         backgroundColor = Color.Gray
     ){
         Text(
             modifier = Modifier.padding(4.dp),
-            text = "Cloudy"
+            text = weatherInfo
         )
     }
 }
 
 @Composable
-fun SummaryTimeDate(){
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column() {
-            Text(text = "Sleman")
-            Text(
-                fontWeight = FontWeight.Light,
-                text = "6 Januari 2023"
-            )
-        }
-        Text(text = "10.00")
-    }
-}
-
-@Composable
-fun SummaryOtherInfo(){
+fun SummaryOtherInfo(currentWeather: CurrentWeather){
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         val rowAlignment = Alignment.CenterVertically
-        val iconModifier = Modifier.size(28.dp)
+        val iconModifier = Modifier
+            .size(28.dp)
             .padding(2.dp)
 
         Row(
@@ -127,7 +122,7 @@ fun SummaryOtherInfo(){
                 painter = painterResource(id = R.drawable.ic_baseline_wind_power_24),
                 contentDescription = "wind_speed"
             )
-            Text(text = "8km/h")
+            Text(text = "${currentWeather.wind.speed.roundToInt()} km/h")
         }
 
         Row(
@@ -138,7 +133,7 @@ fun SummaryOtherInfo(){
                 painter = painterResource(id = R.drawable.ic_outline_water_drop_24),
                 contentDescription = "humidity"
             )
-            Text(text = "69%")
+            Text(text = "${currentWeather.main.humidity}%")
         }
 
         Row(
@@ -149,7 +144,7 @@ fun SummaryOtherInfo(){
                 painter = painterResource(id = R.drawable.ic_outline_cloud_24),
                 contentDescription = "cloud_coverage"
             )
-            Text(text = "44%")
+            Text(text = "${currentWeather.clouds.all}%")
         }
     }
 }
