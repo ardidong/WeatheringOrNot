@@ -20,8 +20,9 @@ import com.ardidong.weatherornot.domain.weather.model.CurrentWeather
 import kotlin.math.roundToInt
 
 @Composable
-fun HomeScreen(){
-    val viewModel = hiltViewModel<MainViewModel>()
+fun HomeScreen(
+    viewModel: MainViewModel = hiltViewModel()
+){
     val currentWeather = viewModel.observableResult.observeAsState(initial = null)
 
     MaterialTheme() {
