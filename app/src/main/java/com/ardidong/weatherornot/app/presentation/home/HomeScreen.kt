@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,47 +15,77 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ardidong.weatherornot.app.CurrentWeatherState
 import com.ardidong.weatherornot.app.MainViewModel
 import com.ardidong.weatherornot.app.R
+import com.ardidong.weatherornot.app.presentation.theme.WeatherOrNotTheme
 import com.ardidong.weatherornot.domain.weather.model.CurrentWeather
 import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel()
 ){
-    val currentWeather = viewModel.observableResult.observeAsState(initial = null)
+    val currentWeatherObs = viewModel.observableResult.observeAsState(CurrentWeatherState.IsLoading)
 
-    MaterialTheme() {
+    WeatherOrNotTheme {
+        val scaffoldState = rememberScaffoldState()
+
         Scaffold(
-            topBar = { TopAppBar(title = { Text(text = "Top Bar")}) }
+            scaffoldState = scaffoldState,
+            topBar = {
+                TopAppBar(elevation = 10.dp ,title = { Text(text = "Top Bar")})
+            },
         ) { paddingValues ->
             Column(
-                modifier = Modifier.padding(paddingValues)
+                modifier = modifier.padding(paddingValues)
             ) {
 
-                if(currentWeather.value !=  null){
-                    WeatherSummary(currentWeather.value!!)
+                Column() {
+                    Button(
+                        onClick = {
+                            viewModel.getCurrentWeather()
+                        }
+                    ) {
+                        Text(text = "Get Data")
+                    }
+                    when(val currentWeather = currentWeatherObs.value){
+                        is CurrentWeatherState.DataFetched -> {
+                            WeatherSummary(
+                                currentWeather = currentWeather.currentWeather
+                            )
+                        }
+                        is CurrentWeatherState.Error -> {
+                            LaunchedEffect(key1 = scaffoldState.snackbarHostState ){
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = currentWeather.errorEntity.message,
+                                    actionLabel = "Action",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+
+                        else -> {}
+                    }
                 }
+
             }
         }
     }
 }
-
-@Preview
 @Composable
-fun WeatherSummary(currentWeather: CurrentWeather = CurrentWeather.DUMMY){
-    Card(
-        modifier = Modifier
+fun WeatherSummary(modifier: Modifier = Modifier, currentWeather: CurrentWeather){
+    Surface(
+        elevation = 16.dp,
+        modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(16.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "Sleman", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            SummaryTempAndWeather( modifier = Modifier
-                .fillMaxWidth()
-                .padding(all = 16.dp),
+            SummaryTempAndWeather(
                 currentWeather = currentWeather
             )
             SummaryOtherInfo(currentWeather)
@@ -63,9 +94,9 @@ fun WeatherSummary(currentWeather: CurrentWeather = CurrentWeather.DUMMY){
 }
 
 @Composable
-fun SummaryTempAndWeather(currentWeather: CurrentWeather ,modifier: Modifier){
+fun SummaryTempAndWeather(modifier: Modifier = Modifier, currentWeather: CurrentWeather){
     Row(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth().padding(all = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){
@@ -82,7 +113,7 @@ fun SummaryTempAndWeather(currentWeather: CurrentWeather ,modifier: Modifier){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                modifier = Modifier.size(72.dp),
+                modifier = modifier.size(72.dp),
                 painter = painterResource(id = R.drawable.ic_baseline_cloud_24),
                 contentDescription = "weather_icon"
             )
@@ -92,26 +123,29 @@ fun SummaryTempAndWeather(currentWeather: CurrentWeather ,modifier: Modifier){
 }
 
 @Composable
-fun CurrentWeatherIcon(weatherInfo: String){
+fun CurrentWeatherIcon(weatherInfo: String, modifier: Modifier = Modifier){
     Card(
         shape = RoundedCornerShape(16.dp),
         backgroundColor = Color.Gray
     ){
         Text(
-            modifier = Modifier.padding(4.dp),
+            modifier = modifier.padding(4.dp),
             text = weatherInfo
         )
     }
 }
 
 @Composable
-fun SummaryOtherInfo(currentWeather: CurrentWeather){
+fun SummaryOtherInfo(
+    currentWeather: CurrentWeather,
+    modifier: Modifier = Modifier
+){
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier.fillMaxWidth()
     ) {
         val rowAlignment = Alignment.CenterVertically
-        val iconModifier = Modifier
+        val iconModifier = modifier
             .size(28.dp)
             .padding(2.dp)
 
@@ -147,5 +181,13 @@ fun SummaryOtherInfo(currentWeather: CurrentWeather){
             )
             Text(text = "${currentWeather.clouds.all}%")
         }
+    }
+}
+
+@Preview
+@Composable
+fun HomePreview() {
+    WeatherOrNotTheme(){
+        WeatherSummary(currentWeather = CurrentWeather.DUMMY)
     }
 }
