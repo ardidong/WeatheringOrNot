@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ardidong.weatherornot.app.CurrentWeatherState
 import com.ardidong.weatherornot.app.MainViewModel
 import com.ardidong.weatherornot.app.R
+import com.ardidong.weatherornot.app.WeatherDataState
 import com.ardidong.weatherornot.app.presentation.theme.WeatherOrNotTheme
 import com.ardidong.weatherornot.domain.weather.model.CurrentWeather
 import kotlin.math.roundToInt
@@ -28,6 +29,7 @@ fun HomeScreen(
     viewModel: MainViewModel = hiltViewModel()
 ){
     val currentWeatherObs = viewModel.observableResult.observeAsState(CurrentWeatherState.IsLoading)
+    val weatherDataObs = viewModel.observableWeatherData.observeAsState(WeatherDataState.IsLoading)
 
     WeatherOrNotTheme {
         val scaffoldState = rememberScaffoldState()
@@ -46,6 +48,7 @@ fun HomeScreen(
                     Button(
                         onClick = {
                             viewModel.getCurrentWeather()
+                            viewModel.getWeatherData()
                         }
                     ) {
                         Text(text = "Get Data")
@@ -60,6 +63,24 @@ fun HomeScreen(
                             LaunchedEffect(key1 = scaffoldState.snackbarHostState ){
                                 scaffoldState.snackbarHostState.showSnackbar(
                                     message = currentWeather.errorEntity.message,
+                                    actionLabel = "Action",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+
+                        else -> {}
+                    }
+
+                    when(val state = weatherDataObs.value){
+                        is WeatherDataState.DataFetched -> {
+                            Text(text = state.toString())
+                        }
+
+                        is WeatherDataState.Error -> {
+                            LaunchedEffect(key1 = scaffoldState.snackbarHostState ){
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = state.errorEntity.message,
                                     actionLabel = "Action",
                                     duration = SnackbarDuration.Short
                                 )
@@ -96,7 +117,9 @@ fun WeatherSummary(modifier: Modifier = Modifier, currentWeather: CurrentWeather
 @Composable
 fun SummaryTempAndWeather(modifier: Modifier = Modifier, currentWeather: CurrentWeather){
     Row(
-        modifier = modifier.fillMaxWidth().padding(all = 16.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(all = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){

@@ -1,5 +1,7 @@
 package com.ardidong.weatherornot.core.weather
 
+import com.ardidong.weatherornot.core.BuildConfig
+import com.ardidong.weatherornot.core.weather.onecall.FetchOneCallRemoteDataSource
 import com.ardidong.weatherornot.domain.common.ResultOf
 import com.ardidong.weatherornot.domain.weather.WeatherRepository
 import com.ardidong.weatherornot.domain.weather.model.CurrentWeather
@@ -7,7 +9,8 @@ import com.ardidong.weatherornot.domain.weather.model.WeatherData
 import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
-    private val remoteDataSource: WeatherRemoteDataSource
+    private val remoteDataSource: WeatherRemoteDataSource,
+    private val oneCallWeather : FetchOneCallRemoteDataSource
 ) : WeatherRepository {
 
     override suspend fun getCurrentWeather(
@@ -15,12 +18,10 @@ class WeatherRepositoryImpl @Inject constructor(
         lon: Double,
         units: String
     ): ResultOf<CurrentWeather> {
-        val apiKey = "282f7c488fd855c229e2d7eee4b75dd4"
-
         return remoteDataSource.getCurrentWeather(
             lat = lat,
             lon = lon,
-            appId = apiKey,
+            appId = BuildConfig.openWeatherKey,
             units = units
         )
     }
@@ -30,6 +31,11 @@ class WeatherRepositoryImpl @Inject constructor(
         lon: Double,
         units: String
     ): ResultOf<WeatherData> {
-        TODO("Not yet implemented")
+        return oneCallWeather(
+            lat = lat,
+            lon = lon,
+            appId = BuildConfig.openWeatherKey,
+            units = units
+        )
     }
 }

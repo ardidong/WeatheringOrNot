@@ -12,7 +12,7 @@ data class DailyItem(
 	val feelsLike: FeelsLike,
 	val windGust: Double,
 	val dt: Int,
-	val pop: Int,
+	val pop: Double,
 	val windDeg: Int,
 	val dewPoint: Double,
 	val sunset: Int,

@@ -28,6 +28,7 @@ class RetrofitClient @Inject constructor(
                 ResultOf.Failure(ErrorEntity.ApiResponseError(message = response.message(), errorCode = response.code().toString()))
             }
         } catch (e: HttpException) {
+            e.printStackTrace()
             ResultOf.Failure(
                 ErrorEntity.ApiResponseError(
                     message = e.message(),
@@ -35,6 +36,7 @@ class RetrofitClient @Inject constructor(
                 )
             )
         } catch (e: Throwable) {
+            e.printStackTrace()
             ResultOf.Failure(ErrorEntity.ApiResponseError(message = e.message.toString(), errorCode = ""))
         }
     }

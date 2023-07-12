@@ -1,17 +1,23 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    id("kotlin-kapt")
 }
 
 android {
     compileSdk = 32
 
+    val openWeatherKey = gradleLocalProperties(rootDir).getProperty("openWeatherKey")
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), file("proguard-rules.pro"))
+        }
+        debug {
+            buildConfigField("String", "openWeatherKey", openWeatherKey)
         }
     }
     compileOptions {
@@ -22,6 +28,9 @@ android {
         jvmTarget = "1.8"
     }
     namespace = "com.ardidong.weatherornot.core"
+
+
+
 }
 
 dependencies {
