@@ -3,6 +3,7 @@ package com.ardidong.weatherornot.core.weather
 import com.ardidong.weatherornot.domain.common.ResultOf
 import com.ardidong.weatherornot.domain.weather.WeatherRepository
 import com.ardidong.weatherornot.domain.weather.model.CurrentWeather
+import com.ardidong.weatherornot.domain.weather.model.WeatherData
 import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
@@ -22,5 +23,13 @@ class WeatherRepositoryImpl @Inject constructor(
             appId = apiKey,
             units = units
         )
+    }
+
+    override suspend fun oneCallWeather(
+        lat: Double,
+        lon: Double,
+        units: String
+    ): ResultOf<WeatherData> {
+        TODO("Not yet implemented")
     }
 }

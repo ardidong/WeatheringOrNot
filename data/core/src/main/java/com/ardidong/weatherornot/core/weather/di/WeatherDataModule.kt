@@ -3,11 +3,12 @@ package com.ardidong.weatherornot.core.weather.di
 import com.ardidong.weatherornot.core.weather.WeatherRemoteDataSource
 import com.ardidong.weatherornot.core.weather.WeatherRemoteDataSourceImpl
 import com.ardidong.weatherornot.core.weather.WeatherRepositoryImpl
+import com.ardidong.weatherornot.core.weather.onecall.FetchOneCallRemoteDataSource
+import com.ardidong.weatherornot.core.weather.onecall.FetchOneCallRemoteDataSourceImpl
 import com.ardidong.weatherornot.domain.weather.WeatherRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.ViewModelComponent
 
 @Module
@@ -24,4 +25,9 @@ abstract class WeatherDataModule {
         weatherRemoteDataSourceImpl: WeatherRemoteDataSourceImpl
     ): WeatherRemoteDataSource
 
+
+    @Binds
+    abstract fun bindFetchOneCallRemoteDataSource(
+        fetchOneCallRemoteDataSourceImpl: FetchOneCallRemoteDataSourceImpl
+    ): FetchOneCallRemoteDataSource
 }
